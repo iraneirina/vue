@@ -9,13 +9,36 @@
       </label>
       = {{ result }}
     </div>
+    <div v-if="error">
+      {{ error }}
+    </div>
     <div>
-      <button @click="result = op1 + op2">+</button>
-      <button @click="sub">-</button>
-      <button @click="div">/</button>
-      <button @click="mult">*</button>
-      <button @click="deg">(*)</button>
-      <button @click="int">integer value</button>
+      <button
+        v-for="operator of operators"
+        :key="operator"
+        @click="calculate(operator)"
+      >{{ operator }}
+      </button>
+    </div>
+    <div>
+      <input type="checkbox" id="checkbox" v-model="checked" v-on:change="visible=!visible">
+      <label for="checkbox">Отобразить клавиатуру</label>
+    </div>
+    <div v-show="visible">
+      <div>
+        <button
+          @click="input(keyNumber)"
+          v-for="keyNumber of keyboardNumbers"
+          :key="keyNumber"
+        >{{ keyNumber }}
+        </button>
+      </div>
+      <div>
+        <input type="radio" id="num1" value="Первое число" v-model="picked">
+        <label for="num1">Первое число</label>
+        <input type="radio" id="num2" value="Второе число" v-model="picked">
+        <label for="num2">Второе число</label>
+      </div>
     </div>
   </div>
 </template>
@@ -27,24 +50,98 @@ export default {
     return {
       op1: 0,
       op2: 0,
-      result: 0
+      result: 0,
+      error: '',
+      operators: ['+', '-', '/', '*', '(*)', 'integer value'],
+      keyboardNumbers: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '<--'],
+      visible: false,
+      picked: ''
     }
   },
   methods: {
+    input (num) {
+
+    },
+    calculate (operator) {
+      this.error = ''
+      // eslint-disable-next-line default-case
+      switch (operator) {
+        case '+':
+          this.sum()
+          break
+        case '-':
+          this.sub()
+          break
+        case '/':
+          this.div()
+          break
+        case '*':
+          this.mult()
+          break
+        case '(*)':
+          this.deg()
+          break
+        case 'integer value':
+          this.int()
+          break
+      }
+      this.$set(this.logs, Date.now(), `${this.op1} ${operator} ${this.op2} = ${this.result}`)
+    },
+    sum () {
+      const {
+        op1,
+        op2
+      } = this
+      this.error = ''
+      this.result = op1 + op2
+    },
     sub () {
-      this.result = this.op1 - this.op2
+      const {
+        op1,
+        op2
+      } = this
+      this.error = ''
+      this.result = op1 - op2
     },
     div () {
-      this.result = this.op1 / this.op2
+      const {
+        op1,
+        op2
+      } = this
+      this.error = ''
+      if (this.op2 === 0) {
+        this.error = 'На ноль делить нельзя'
+        return
+      }
+      this.result = op1 / op2
     },
     mult () {
-      this.result = this.op1 * this.op2
+      const {
+        op1,
+        op2
+      } = this
+      this.error = ''
+      this.result = op1 * op2
     },
     deg () {
-      this.result = Math.pow(this.op1, this.op2)
+      const {
+        op1,
+        op2
+      } = this
+      this.error = ''
+      this.result = Math.pow(op1, op2)
     },
     int () {
-      this.result = +(this.op1 / this.op2).toFixed(0)
+      const {
+        op1,
+        op2
+      } = this
+      this.error = ''
+      if (this.op2 === 0) {
+        this.error = 'На ноль делить нельзя'
+        return
+      }
+      this.result = +(op1 / op2).toFixed(0)
     }
 
   }
