@@ -32,11 +32,12 @@
           :key="keyNumber"
         >{{ keyNumber }}
         </button>
+        <button @click="reset()">Reset</button>
       </div>
       <div>
-        <input type="radio" id="num1" value="Первое число" v-model="picked">
+        <input type="radio" @click=changeOp id="num1" value="first1" v-model="picked">
         <label for="num1">Первое число</label>
-        <input type="radio" id="num2" value="Второе число" v-model="picked">
+        <input type="radio" @click=changeOp id="num2" value="second2" v-model="picked">
         <label for="num2">Второе число</label>
       </div>
     </div>
@@ -48,19 +49,34 @@ export default {
   name: 'CalcComponent',
   data () {
     return {
-      op1: 0,
-      op2: 0,
+      op1: '',
+      op2: '',
+      currentOperand: 'op1',
       result: 0,
       error: '',
       operators: ['+', '-', '/', '*', '(*)', 'integer value'],
-      keyboardNumbers: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '<--'],
+      keyboardNumbers: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       visible: false,
-      picked: ''
+      picked: 'first1'
     }
   },
   methods: {
     input (num) {
-
+      this[this.currentOperand] = this[this.currentOperand].toString()
+      this[this.currentOperand] += num
+      this[this.currentOperand] = Number(this[this.currentOperand])
+    },
+    reset () {
+      this[this.currentOperand] = ''
+    },
+    changeOp () {
+      if (this.picked === 'first1') {
+        this.currentOperand = 'op2'
+        // alert(this.picked)
+      } else {
+        // alert(this.picked)
+        this.currentOperand = 'op1'
+      }
     },
     calculate (operator) {
       this.error = ''
